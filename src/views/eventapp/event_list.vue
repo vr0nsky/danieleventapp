@@ -103,7 +103,11 @@
                           </b-form-group>
                         </div>
                       </div>
-                      <b-button type="submit" variant="primary" class="my-4">{{ $t('submit') }}</b-button>
+                      <b-button v-if="loading" type="submit" variant="primary" class="my-4" disabled>
+                        <b-spinner style="width: 1rem; height: 1rem;" type="grow"></b-spinner>
+                        Creating...
+                      </b-button>
+                      <b-button v-else type="submit" variant="primary" class="my-4">{{ $t('submit') }}</b-button>
                   </b-form>
                   
                   <template #modal-footer>
@@ -147,7 +151,11 @@
                           </b-select>
                         </b-form-group>
                       </div>
-                      <b-button type="submit" variant="primary" class="my-4">{{ $t('submit') }}</b-button>
+                      <b-button v-if="loading" type="submit" variant="primary" class="my-4" disabled>
+                        <b-spinner style="width: 1rem; height: 1rem;" type="grow"></b-spinner>
+                        Updating...
+                      </b-button>
+                      <b-button v-else type="submit" variant="primary" class="my-4">{{ $t('submit') }}</b-button>
                   </b-form>
                   
                   <template #modal-footer>
@@ -276,6 +284,7 @@
           static: true,
           dateFormat: 'Y-m-d\\TH:i:S'
         },
+        loading: false,
         defaultItem: {
           name: '',
           company: '',
@@ -401,6 +410,8 @@
         }
       },
       async addNewEvent() {
+        this.loading = true
+
         try {
           await api.post('api/v1/events', this.itemModel)
 
@@ -409,8 +420,12 @@
         } catch(e) {
           this.errors.push(e)
         }
+
+        this.loading = false
       },
       async updateEvent() {
+        this.loading = true
+
         try {
           await api.put(`api/v1/events/${this.itemModel.idEvent}`, this.itemModel)
 
@@ -419,6 +434,8 @@
         } catch(e) {
           this.errors.push(e)
         }
+
+        this.loading = false
       }
     }
   };
