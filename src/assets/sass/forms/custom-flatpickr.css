@@ -89,3 +89,7 @@ span.flatpickr-weekday {
 .flatpickr-input[readonly] {
     background-color: transparent !important;
 }
+
+.flatpickr-wrapper {
+  width: 100%;
+}
