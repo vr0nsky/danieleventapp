@@ -43,7 +43,7 @@
                     tag="a" 
                     variant="primary" 
                     class="ml-2"
-                    v-b-modal.modalnewevent
+                    @click="showAddModal"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus">
                         <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12">
@@ -56,49 +56,49 @@
               
               <!-- modalnewevent -->
               <b-modal id="modalnewevent" :title="this.$t('add_new_event')" size="lg">
-                  <b-form>
+                  <b-form v-if="itemModel" @submit.prevent="addNewEvent">
                       <div class="row">
                         <div class="col-lg-6 col-12 mx-auto">
                           <b-form-group :label="this.$t('event_name')">
-                            <b-input type="text" :placeholder="this.$t('event_name')"></b-input>
+                            <b-input v-model="itemModel.name" type="text" :placeholder="this.$t('event_name')"></b-input>
                           </b-form-group>
                         </div>
                         <div class="col-lg-6 col-12 mx-auto">
                           <b-form-group :label="this.$t('company_name')">
-                            <b-input type="text" :placeholder="this.$t('company_name')"></b-input>
+                            <b-input v-model="itemModel.company" type="text" :placeholder="this.$t('company_name')"></b-input>
                           </b-form-group>
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-lg-12 col-12 mx-auto">
                           <b-form-group :label="this.$t('description')">
-                            <b-textarea rows="2"></b-textarea>
+                            <b-textarea v-model="itemModel.description" rows="2"></b-textarea>
                           </b-form-group>
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-lg-6 col-12 mx-auto">
                           <b-form-group :label="this.$t('start_date')">
-                            <flat-pickr v-model="date1" class="form-control flatpickr active" :config="staticConfig"></flat-pickr>
+                            <flat-pickr v-model="itemModel.startDate" class="form-control flatpickr active" :config="flatPickrConfig"></flat-pickr>
                           </b-form-group>
                         </div>
                         <div class="col-lg-6 col-12 mx-auto">
                           <b-form-group :label="this.$t('end_date')">
-                            <flat-pickr v-model="date2" class="form-control flatpickr active"  :config="staticConfig"></flat-pickr>
+                            <flat-pickr v-model="itemModel.endDate" class="form-control flatpickr active"  :config="flatPickrConfig"></flat-pickr>
                           </b-form-group>
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-lg-6 col-12 mx-auto">
                           <b-form-group :label="this.$t('type')">
-                            <b-input type="text" :placeholder="this.$t('type')"></b-input>
+                            <b-input v-model="itemModel.type" type="text" :placeholder="this.$t('type')"></b-input>
                           </b-form-group>
                         </div>
                         <div class="col-lg-6 col-12 mx-auto">
                           <b-form-group :label="this.$t('status')">
-                            <b-select :value="1">
-                              <b-select-option value="1">{{ $t('open') }}</b-select-option>
-                              <b-select-option value="2">{{ $t('closed') }}</b-select-option>
+                            <b-select v-model="itemModel.status">
+                              <b-select-option value="o">{{ $t('open') }}</b-select-option>
+                              <b-select-option value="c">{{ $t('closed') }}</b-select-option>
                             </b-select>
                           </b-form-group>
                         </div>
@@ -114,34 +114,34 @@
 
               <!-- modaleditevent -->
               <b-modal id="modaleditevent" :title="this.$t('edit_event')" size="lg">
-                  <b-form>
+                  <b-form v-if="itemModel" @submit.prevent="updateEvent">
                       <div class="row">
                         <div class="col-lg-6 col-12 mx-auto">
                           <b-form-group :label="this.$t('company')">
-                            <b-input v-if="editItem" v-model="editItem.company" type="text" :placeholder="this.$t('company')"></b-input>
+                            <b-input v-model="itemModel.company" type="text" :placeholder="this.$t('company')"></b-input>
                           </b-form-group>
                         </div>
                         <div class="col-lg-6 col-12 mx-auto">
                           <b-form-group :label="this.$t('name')">
-                            <b-input v-if="editItem" v-model="editItem.name" type="text" :placeholder="this.$t('name')"></b-input>
+                            <b-input v-model="itemModel.name" type="text" :placeholder="this.$t('name')"></b-input>
                           </b-form-group>
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-lg-12 col-12 mx-auto">
                           <b-form-group :label="this.$t('description')">
-                            <b-textarea v-if="editItem" rows="2" v-model="editItem.description"></b-textarea>
+                            <b-textarea rows="2" v-model="itemModel.description"></b-textarea>
                           </b-form-group>
                         </div>
                       </div>
                       <div>
                         <b-form-group :label="this.$t('start_date')">
-                          <flat-pickr v-if="editItem" v-model="editItem.startDate" class="form-control flatpickr active" :config="staticConfig"></flat-pickr>
+                          <flat-pickr v-model="itemModel.startDate" class="form-control flatpickr active" :config="flatPickrConfig"></flat-pickr>
                         </b-form-group>
                       </div>
                       <div>
                         <b-form-group :label="this.$t('status')">
-                          <b-select v-if="editItem" v-model="editItem.status">
+                          <b-select v-model="itemModel.status">
                             <b-select-option value="o">{{ $t('open') }}</b-select-option>
                             <b-select-option value="c">{{ $t('closed') }}</b-select-option>
                           </b-select>
@@ -151,7 +151,7 @@
                   </b-form>
                   
                   <template #modal-footer>
-                      <b-button variant="default" data-dismiss="modal" @click="$bvModal.hide('modalnewevent')"><i class="flaticon-cancel-12"></i>{{ $t('discard') }}</b-button>
+                      <b-button variant="default" data-dismiss="modal" @click="$bvModal.hide('modaleditevent')"><i class="flaticon-cancel-12"></i>{{ $t('discard') }}</b-button>
                   </template>
               </b-modal>
               <!-- end modaleditevent -->
@@ -250,12 +250,15 @@
 </template>
 
 <script>
-  import axios from 'axios';
+  import api from '@/api.js'
   import '@/assets/sass/apps/invoice-list.scss';
   //flatpickr
   import flatPickr from 'vue-flatpickr-component';
   import 'flatpickr/dist/flatpickr.css';
   import '@/assets/sass/forms/custom-flatpickr.css';
+
+  // date-fns
+  // import format from 'date-fns/format'
 
   export default {
     metaInfo: { title: 'Events List' },
@@ -269,12 +272,20 @@
         meta: {},
         is_select_all: false, selected_rows: [],
         flatPickrVisible: false,
-        staticConfig: {
-          static: true
+        flatPickrConfig: {
+          static: true,
+          dateFormat: 'Y-m-d\\TH:i:S'
         },
-        date1: '2020-09-04',
-        date2: '2020-09-04',
-        editItem: null
+        defaultItem: {
+          name: '',
+          company: '',
+          description: '',
+          startDate: '2022-12-12',
+          endDate: '2022-12-25',
+          type: 'a',
+          status: 'o'
+        },
+        itemModel: null
       }
     },
     watch: {
@@ -287,14 +298,7 @@
       },
     },
     created() {
-      axios.get('https://read.prendoquota.it/api/v1/events')
-      .then(response => {
-        // JSON responses are automatically parsed.
-        this.items = response.data.items
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
+      this.getEvents()
     },
     mounted() {
       this.bind_data();
@@ -377,9 +381,44 @@
             return this.$t('closed')
         }
       },
+      showAddModal() {
+        this.itemModel = Object.assign({}, this.defaultItem)
+
+        this.$bvModal.show('modalnewevent')
+      },
       showEditModal(item) {
-        this.editItem = item
+        this.itemModel = Object.assign({}, item)
+        console.log(this.itemModel)
         this.$bvModal.show('modaleditevent')
+      },
+      async getEvents() {
+        try {
+          const response = await api.get('api/v1/events')
+
+          this.items = response.data.items
+        } catch(e) {
+          this.errors.push(e)
+        }
+      },
+      async addNewEvent() {
+        try {
+          await api.post('api/v1/events', this.itemModel)
+
+          this.$bvModal.hide('modalnewevent')
+          this.getEvents()
+        } catch(e) {
+          this.errors.push(e)
+        }
+      },
+      async updateEvent() {
+        try {
+          await api.put(`api/v1/events/${this.itemModel.idEvent}`, this.itemModel)
+
+          this.$bvModal.hide('modaleditevent')
+          this.getEvents()
+        } catch(e) {
+          this.errors.push(e)
+        }
       }
     }
   };
