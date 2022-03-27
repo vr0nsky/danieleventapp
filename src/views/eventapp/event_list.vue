@@ -143,13 +143,20 @@
                           <flat-pickr v-model="itemModel.startDate" class="form-control flatpickr active" :config="flatPickrConfig"></flat-pickr>
                         </b-form-group>
                       </div>
-                      <div>
-                        <b-form-group :label="this.$t('status')">
-                          <b-select v-model="itemModel.status">
-                            <b-select-option value="o">{{ $t('open') }}</b-select-option>
-                            <b-select-option value="c">{{ $t('closed') }}</b-select-option>
-                          </b-select>
-                        </b-form-group>
+                      <div class="row">
+                        <div class="col-lg-6 col-12 mx-auto">
+                          <b-form-group :label="this.$t('type')">
+                            <b-input v-model="itemModel.type" type="text" :placeholder="this.$t('type')"></b-input>
+                          </b-form-group>
+                        </div>
+                        <div class="col-lg-6 col-12 mx-auto">
+                          <b-form-group :label="this.$t('status')">
+                            <b-select v-model="itemModel.status">
+                              <b-select-option value="o">{{ $t('open') }}</b-select-option>
+                              <b-select-option value="c">{{ $t('closed') }}</b-select-option>
+                            </b-select>
+                          </b-form-group>
+                        </div>
                       </div>
                       <b-button v-if="loading" type="submit" variant="primary" class="my-4" disabled>
                         <b-spinner style="width: 1rem; height: 1rem;" type="grow"></b-spinner>
@@ -212,7 +219,7 @@
               </template>
               <template #cell(actions)="row">
                 <div class="position-relative">
-                  <b-button tag="a" :href="'/products/' + row.item.idEvent" variant="info" class="ml-2" size="sm">
+                  <b-button tag="a" :href="'/subevents/' + row.item.idEvent" variant="info" class="ml-2" size="sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                     {{row.value}}
                   </b-button>
@@ -289,8 +296,8 @@
           name: '',
           company: '',
           description: '',
-          startDate: '2022-12-12',
-          endDate: '2022-12-25',
+          startDate: Date.now(),
+          endDate: Date.now(),
           type: 'a',
           status: 'o'
         },
@@ -301,16 +308,14 @@
       table_option: {
         handler: function () {
           this.get_meta();
-          this.clear_selection();
+          // this.clear_selection();
         },
         deep: true
       },
     },
-    created() {
-      this.getEvents()
-    },
-    mounted() {
-      this.bind_data();
+    async created() {
+      await this.getEvents()
+      this.bind_data()
     },
     methods: {
       bind_data() {
@@ -392,7 +397,6 @@
       },
       showAddModal() {
         this.itemModel = Object.assign({}, this.defaultItem)
-
         this.$bvModal.show('modalnewevent')
       },
       showEditModal(item) {

@@ -22,6 +22,12 @@ const routes = [
         component: () => import(/* webpackChunkName: "events" */ '../views/eventapp/event_list.vue')
     },
 
+    {
+        path: '/subevents/:id',
+        name: 'subevents',
+        component: () => import(/* webpackChunkName: "events" */ '../views/eventapp/subevent_list.vue')
+    },
+
     //components
     {
         path: '/components/tabs',
